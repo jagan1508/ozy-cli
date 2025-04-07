@@ -11,6 +11,7 @@ type Item struct {
 	Text     string
 	Priority int
 	Position int
+	Done     bool
 }
 
 func SaveItems(filename string, items []Item) error {
@@ -52,6 +53,13 @@ func (i *Item) SetPriority(priority int) {
 	}
 }
 
+func (i *Item) PrettyDone() string {
+	if i.Done {
+		return "X"
+	}
+	return ""
+}
+
 func (i *Item) PrettyP() string {
 	if i.Priority == 1 {
 		return "(1)"
@@ -77,8 +85,11 @@ func (s ByPri) Swap(i, j int) {
 }
 
 func (s ByPri) Less(i, j int) bool {
-	if s[i].Priority == s[j].Priority {
-		return s[i].Position < s[j].Position
+	if s[i].Done != s[j].Done {
+		return s[i].Done
 	}
-	return s[i].Priority < s[j].Priority
+	if s[i].Priority != s[j].Priority {
+		return s[i].Priority < s[j].Priority
+	}
+	return s[i].Position < s[j].Position
 }
