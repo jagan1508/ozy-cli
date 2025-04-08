@@ -11,30 +11,31 @@ import (
 
 	"github.com/jagan1508/ozy/todo"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // doneCmd represents the done command
 var doneCmd = &cobra.Command{
-	Use:   "done",
+	Use:     "done",
 	Aliases: []string{"do"},
-	Short: "To mark an item in the todo list as done",
-	Long: `Used to make the status(done) of a item in the todo list`,
-	Run: doneRun,
+	Short:   "To mark an item in the todo list as done",
+	Long:    `Used to make the status(done) of a item in the todo list`,
+	Run:     doneRun,
 }
 
 func doneRun(cmd *cobra.Command, args []string) {
-	items, err :=todo.ReadItems(dataFile)
-	i,err := strconv.Atoi(args[0])
-	if err !=nil {
-		log.Fatalln(args[0]," is not a valid label \n",err)
+	items, _ := todo.ReadItems(viper.GetString("datafile"))
+	i, err := strconv.Atoi(args[0])
+	if err != nil {
+		log.Fatalln(args[0], " is not a valid label \n", err)
 	}
-	if i>0 && i<len(items){
-		items[i-1].Done =true
+	if i > 0 && i <= len(items) {
+		items[i-1].Done = true
 		fmt.Printf("%q Marked Done... \n", items[i-1].Text)
 		sort.Sort(todo.ByPri(items))
-		todo.SaveItems(dataFile,items)
-	} else{
-		log.Println(i ,"does not match any items ")
+		todo.SaveItems(viper.GetString("datafile"), items)
+	} else {
+		log.Println(i, "does not match any items ")
 	}
 }
 

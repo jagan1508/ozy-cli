@@ -12,6 +12,7 @@ import (
 
 	"github.com/jagan1508/ozy/todo"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 // listCmd represents the list command
@@ -24,10 +25,11 @@ var listCmd = &cobra.Command{
 
 var (
 	doneOpt bool
+	allOpt  bool
 )
 
 func listRun(cmd *cobra.Command, args []string) {
-	items, err := todo.ReadItems(dataFile)
+	items, err := todo.ReadItems(viper.GetString("datafile"))
 	if err != nil {
 		log.Printf("%v", err)
 	}
@@ -35,7 +37,7 @@ func listRun(cmd *cobra.Command, args []string) {
 
 	w := tabwriter.NewWriter(os.Stdout, 3, 0, 1, ' ', 0)
 	for _, i := range items {
-		if i.Done == doneOpt {
+		if allOpt || i.Done == doneOpt {
 			fmt.Fprintln(w, i.Label()+"\t"+i.PrettyDone()+"\t"+i.PrettyP()+"\t"+i.Text+"\t")
 		}
 	}
@@ -50,6 +52,7 @@ func init() {
 	// and all subcommands, e.g.:
 	// listCmd.PersistentFlags().String("foo", "", "A help for foo")
 	listCmd.Flags().BoolVar(&doneOpt, "done", false, "Show todos which are done ")
+	listCmd.Flags().BoolVar(&allOpt, "all", false, "Show all items in todo list")
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// listCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
