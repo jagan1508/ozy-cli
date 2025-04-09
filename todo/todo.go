@@ -2,7 +2,6 @@ package todo
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"strconv"
 )
@@ -19,7 +18,7 @@ func SaveItems(filename string, items []Item) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(j))
+	//fmt.Println(string(j))
 	err = os.WriteFile(filename, j, 0644)
 	if err != nil {
 		return err
